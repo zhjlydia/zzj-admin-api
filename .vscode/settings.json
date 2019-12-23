@@ -1,0 +1,33 @@
+{
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": false,
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+  },
+  "files.encoding": "utf8",
+  "search.exclude": {
+    "lib": true
+  },
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.suggest.autoImports": false,
+  "typescript.tsc.autoDetect": "off",
+  "javascript.format.enable": false,
+  "tslint.autoFixOnSave": true,
+  "tslint.ignoreDefinitionFiles": false,
+  "git.autoRepositoryDetection": false,
+  "files.associations": {
+    ".env.*": "ini",
+    ".env": "ini",
+    ".*rc": "json",
+    ".npmrc": "text"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": false,
+    "source.organizeImports": true
+  }
+}

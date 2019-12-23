@@ -1,3 +1,5 @@
+// tslint:disable-next-line:no-var-requires
+require('ts-node/register');
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
