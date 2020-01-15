@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { ArticleEntity } from '../core/entity/article.entity';
-import { ArticlesReq, ArticlesRes } from '../core/interface/article';
+import { ArticlesReq } from '../core/interface/article';
+import { PaginationData, PaginationOptions } from '../core/interface/common';
 
 @Injectable()
 export class ArticleService {
@@ -11,32 +12,21 @@ export class ArticleService {
     private readonly articleRepository: Repository<ArticleEntity>,
   ) {}
 
-  async findAll(query): Promise<ArticlesRes> {
-
-    const qb = await getRepository(ArticleEntity)
-      .createQueryBuilder('article');
-
+  async findAll(
+    query: PaginationOptions,
+  ): Promise<PaginationData<ArticleEntity>> {
+    const { index = 1, size = 10 }: PaginationOptions = query || {};
+    const qb = await getRepository(ArticleEntity).createQueryBuilder('article');
     qb.where('1 = 1');
-
     qb.orderBy('article.created', 'DESC');
-
-    const articlesCount = await qb.getCount();
-
-    if ('limit' in query) {
-      qb.limit(query.limit);
-    }
-
-    if ('offset' in query) {
-      qb.offset(query.offset);
-    }
-
-    const articles = await qb.getMany();
-
-    return {articles, articlesCount};
+    const total = await qb.getCount();
+    qb.limit(size);
+    qb.offset(index - 1);
+    const list: ArticleEntity[] = await qb.getMany();
+    return { index, size, list, total };
   }
 
   async create(articleData: ArticlesReq): Promise<ArticleEntity> {
-
     const article = new ArticleEntity();
     article.title = articleData.title;
     article.description = articleData.description;
@@ -45,5 +35,4 @@ export class ArticleService {
     const newArticle = await this.articleRepository.save(article);
     return newArticle;
   }
-
 }

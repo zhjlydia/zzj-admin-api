@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    
     "declaration": true,
+    "esModuleInterop": true,
     "removeComments": true,
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./dist",

@@ -1,6 +1,8 @@
+import { ArticleEntity } from '@/core/entity/article.entity';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
-import { ArticlesReq, ArticlesRes } from '../core/interface/article';
+import { ArticlesReq } from '../core/interface/article';
+import { PaginationData } from '../core/interface/common';
 import { ArticleService } from './article.service';
 
 @ApiBearerAuth()
@@ -11,7 +13,7 @@ export class ArticleController {
 
   @ApiResponse({ status: 200, description: 'Return all articles.'})
   @Get()
-  async findAll(@Query() query): Promise<ArticlesRes> {
+  async findAll(@Query() query): Promise<PaginationData<ArticleEntity>>  {
     return await this.articleService.findAll(query);
   }
 
