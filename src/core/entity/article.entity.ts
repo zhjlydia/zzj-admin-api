@@ -12,7 +12,7 @@ import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
     @Column()
     title: string;
 
-    @Column({default: ''})
+    @Column('text')
     description: string;
 
     @Column({default: ''})
