@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ArticleEntity } from 'entity/article.entity';
+import { ArticlesReq } from 'interface/article';
+import { PaginationData, PaginationOptions } from 'interface/common';
 import { getRepository, Repository } from 'typeorm';
-import { ArticleEntity } from '../core/entity/article.entity';
-import { ArticlesReq } from '../core/interface/article';
-import { PaginationData, PaginationOptions } from '../core/interface/common';
 
 @Injectable()
 export class ArticleService {
