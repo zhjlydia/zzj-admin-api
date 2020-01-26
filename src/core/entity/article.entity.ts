@@ -5,9 +5,9 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
-import { Comment } from './comment.entity';
+import { CommentEntity } from './comment.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('article')
@@ -24,18 +24,18 @@ export class ArticleEntity {
   @Column('text')
   description: string;
 
-  @Column({ default: '' })
-  body: string;
+  @Column('text')
+  content: string;
 
   @Column({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP'
   })
   created: Date;
 
   @Column({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP'
   })
   updated: Date;
 
@@ -44,21 +44,19 @@ export class ArticleEntity {
     this.updated = new Date();
   }
 
-  @Column('simple-array')
-  tagList: string[];
   @ManyToOne(
     type => UserEntity,
-    user => user.articles,
+    user => user.articles
   )
   author: UserEntity;
 
   @OneToMany(
-    type => Comment,
+    type => CommentEntity,
     comment => comment.article,
-    { eager: true },
+    { eager: true }
   )
   @JoinColumn()
-  comments: Comment[];
+  comments: CommentEntity[];
   @Column({ default: 0 })
   favoriteCount: number;
 }

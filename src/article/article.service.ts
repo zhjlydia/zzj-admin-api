@@ -9,15 +9,18 @@ import { getRepository, Repository } from 'typeorm';
 export class ArticleService {
   constructor(
     @InjectRepository(ArticleEntity)
-    private readonly articleRepository: Repository<ArticleEntity>,
+    private readonly articleRepository: Repository<ArticleEntity>
   ) {}
 
   async findAll(
-    query: PaginationOptions,
+    query: PaginationOptions
   ): Promise<PaginationData<ArticleEntity>> {
     const { index = 1, size = 10 }: PaginationOptions = query || {};
-    const qb = await getRepository(ArticleEntity).createQueryBuilder('article');
+    const qb = await getRepository(ArticleEntity)
+      .createQueryBuilder('article')
+      .innerJoinAndSelect('article.author', 'author');
     qb.where('1 = 1');
+    qb.andWhere('author.isAdmin = true');
     qb.orderBy('article.created', 'DESC');
     const total = await qb.getCount();
     qb.limit(size);
@@ -30,7 +33,6 @@ export class ArticleService {
     const article = new ArticleEntity();
     article.title = articleData.title;
     article.description = articleData.description;
-    article.tagList = articleData.tagList || [];
 
     const newArticle = await this.articleRepository.save(article);
     return newArticle;

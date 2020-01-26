@@ -7,9 +7,10 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { ArticleEntity } from './article.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -23,8 +24,8 @@ export class UserEntity {
   @IsEmail()
   email: string;
 
-  @Column({ default: '' })
-  bio: string;
+  @Column({ default: false })
+  isAdmin: boolean;
 
   @Column({ default: '' })
   image: string;
@@ -43,7 +44,13 @@ export class UserEntity {
 
   @OneToMany(
     type => ArticleEntity,
-    article => article.author,
+    article => article.author
   )
   articles: ArticleEntity[];
+
+  @OneToMany(
+    type => CommentEntity,
+    comment => comment.user
+  )
+  comments: CommentEntity[];
 }
