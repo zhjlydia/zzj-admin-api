@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
+import { ClassificationEntity } from './classification.entity';
 import { CommentEntity } from './comment.entity';
 import { UserEntity } from './user.entity';
 
@@ -49,6 +50,12 @@ export class ArticleEntity {
     user => user.articles
   )
   author: UserEntity;
+
+  @ManyToOne(
+    type => ClassificationEntity,
+    classification => classification.articles
+  )
+  classification: ClassificationEntity;
 
   @OneToMany(
     type => CommentEntity,

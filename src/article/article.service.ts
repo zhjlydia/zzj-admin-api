@@ -7,18 +7,24 @@ import { getRepository, Repository } from 'typeorm';
 
 @Injectable()
 export class ArticleService {
+  userRepository: any;
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>
   ) {}
 
+  /**
+   * 获取文章列表
+   *
+   */
   async findAll(
     query: PaginationOptions
   ): Promise<PaginationData<ArticleEntity>> {
     const { index = 1, size = 10 }: PaginationOptions = query || {};
     const qb = await getRepository(ArticleEntity)
       .createQueryBuilder('article')
-      .innerJoinAndSelect('article.author', 'author');
+      .innerJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.classification', 'classification');
     qb.where('1 = 1');
     qb.andWhere('author.isAdmin = true');
     qb.orderBy('article.created', 'DESC');
@@ -29,10 +35,21 @@ export class ArticleService {
     return { index, size, list, total };
   }
 
-  async create(articleData: ArticlesReq): Promise<ArticleEntity> {
+  /**
+   * 创建
+   *
+   */
+  async create(
+    userId: number,
+    articleData: ArticlesReq
+  ): Promise<ArticleEntity> {
+    const author = await this.userRepository.findOne({ where: { id: userId } });
+
     const article = new ArticleEntity();
     article.title = articleData.title;
     article.description = articleData.description;
+    article.content = articleData.content;
+    article.author = author;
 
     const newArticle = await this.articleRepository.save(article);
     return newArticle;

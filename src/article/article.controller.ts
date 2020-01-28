@@ -1,3 +1,4 @@
+import { User } from '@/core/decorators/user';
 import { ArticleEntity } from '@/core/entity/article.entity';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -8,20 +9,24 @@ import { ArticleService } from './article.service';
 @ApiBearerAuth()
 @Controller('article')
 export class ArticleController {
-
   constructor(private readonly articleService: ArticleService) {}
 
-  @ApiResponse({ status: 200, description: 'Return all articles.'})
+  @ApiResponse({ status: 200, description: 'Return all articles.' })
   @Get()
-  async findAll(@Query() query): Promise<PaginationData<ArticleEntity>>  {
+  async findAll(@Query() query): Promise<PaginationData<ArticleEntity>> {
     return await this.articleService.findAll(query);
   }
 
-  @ApiResponse({ status: 201, description: 'The article has been successfully created.'})
+  @ApiResponse({
+    status: 201,
+    description: 'The article has been successfully created.'
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
-  async create( @Body('article') articleData: ArticlesReq) {
-    return this.articleService.create( articleData);
+  async create(
+    @User('id') userId: number,
+    @Body('article') articleData: ArticlesReq
+  ) {
+    return this.articleService.create(userId, articleData);
   }
-
 }

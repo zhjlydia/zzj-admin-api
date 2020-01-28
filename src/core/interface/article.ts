@@ -1,5 +1,6 @@
-export class ArticlesReq {
-  readonly title: string;
-  readonly description: string;
-  readonly content: string;
+export interface ArticlesReq {
+  title: string;
+  description: string;
+  content: string;
+  classificationId: number;
 }
