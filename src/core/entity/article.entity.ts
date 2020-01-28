@@ -17,9 +17,6 @@ export class ArticleEntity {
   id: number;
 
   @Column()
-  slug: string;
-
-  @Column()
   title: string;
 
   @Column('text')
@@ -45,6 +42,9 @@ export class ArticleEntity {
     this.updated = new Date();
   }
 
+  @Column()
+  authorId: number;
+
   @ManyToOne(
     type => UserEntity,
     user => user.articles
@@ -56,6 +56,9 @@ export class ArticleEntity {
     classification => classification.articles
   )
   classification: ClassificationEntity;
+
+  @Column()
+  classificationId: number;
 
   @OneToMany(
     type => CommentEntity,

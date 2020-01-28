@@ -43,13 +43,13 @@ export class ArticleService {
     userId: number,
     articleData: ArticlesReq
   ): Promise<ArticleEntity> {
-    const author = await this.userRepository.findOne({ where: { id: userId } });
-
+    console.log(articleData);
     const article = new ArticleEntity();
     article.title = articleData.title;
     article.description = articleData.description;
     article.content = articleData.content;
-    article.author = author;
+    article.authorId = 1;
+    article.classificationId = 1;
 
     const newArticle = await this.articleRepository.save(article);
     return newArticle;

@@ -1,4 +1,3 @@
-import { User } from '@/core/decorators/user';
 import { ArticleEntity } from '@/core/entity/article.entity';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -24,9 +23,9 @@ export class ArticleController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
   async create(
-    @User('id') userId: number,
+    // @User('id') userId: number,
     @Body('article') articleData: ArticlesReq
   ) {
-    return this.articleService.create(userId, articleData);
+    return this.articleService.create(1, articleData);
   }
 }
