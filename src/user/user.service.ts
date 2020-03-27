@@ -5,8 +5,8 @@ import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import { UserEntity } from 'entity/user.entity';
+import jwt from 'jsonwebtoken';
 import { Repository } from 'typeorm';
-const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class UserService {
@@ -33,13 +33,15 @@ export class UserService {
   }
 
   public generateJWT(user) {
-    let today = new Date();
-    let exp = new Date(today);
+    const today = new Date();
+    const exp = new Date(today);
     exp.setDate(today.getDate() + 60);
 
     return jwt.sign(
       {
         id: user.id,
+        username: user.username,
+        email: user.email,
         exp: exp.getTime() / 1000
       },
       SECRET

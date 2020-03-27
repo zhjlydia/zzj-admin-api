@@ -21,14 +21,22 @@ export class UserController {
   async login(
     @Body('user') loginUserDto: LoginUserDto
   ): Promise<UserWhthToken> {
-    const _user = await this.userService.findOne(loginUserDto);
+    const user = await this.userService.findOne(loginUserDto);
 
     const errors = { User: ' not found' };
-    if (!_user) throw new HttpException({ errors }, 401);
+    if (!user) {
+      throw new HttpException({ errors }, 401);
+    }
 
-    const token = await this.userService.generateJWT(_user);
-    const { id, email, username, image } = _user;
-    const user = { id, email, username, image };
-    return { user, token };
+    const token = await this.userService.generateJWT(user);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        image: user.image
+      },
+      token
+    };
   }
 }

@@ -1,12 +1,4 @@
-import {
-  BeforeUpdate,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn
-} from 'typeorm';
+import { BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ClassificationEntity } from './classification.entity';
 import { CommentEntity } from './comment.entity';
 import { UserEntity } from './user.entity';
@@ -15,6 +7,9 @@ import { UserEntity } from './user.entity';
 export class ArticleEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  slug: string;
 
   @Column()
   title: string;
@@ -42,9 +37,6 @@ export class ArticleEntity {
     this.updated = new Date();
   }
 
-  @Column()
-  authorId: number;
-
   @ManyToOne(
     type => UserEntity,
     user => user.articles
@@ -57,15 +49,10 @@ export class ArticleEntity {
   )
   classification: ClassificationEntity;
 
-  @Column()
-  classificationId: number;
-
   @OneToMany(
     type => CommentEntity,
-    comment => comment.article,
-    { eager: true }
+    comment => comment.article
   )
-  @JoinColumn()
   comments: CommentEntity[];
   @Column({ default: 0 })
   favoriteCount: number;

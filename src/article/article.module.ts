@@ -1,3 +1,5 @@
+import { ClassificationEntity } from '@/core/entity/classification.entity';
+import { UserEntity } from '@/core/entity/user.entity';
 import { UserModule } from '@/user/user.module';
 import {
   MiddlewareConsumer,
@@ -11,7 +13,10 @@ import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ArticleEntity]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([ArticleEntity, UserEntity, ClassificationEntity]),
+    UserModule
+  ],
   providers: [ArticleService],
   controllers: [ArticleController]
 })
