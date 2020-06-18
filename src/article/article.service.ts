@@ -1,10 +1,11 @@
 import { ClassificationEntity } from '@/core/entity/classification.entity';
+import { TagEntity } from '@/core/entity/tag.entity';
 import { UserEntity } from '@/core/entity/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleEntity } from 'entity/article.entity';
 import { CreateArticleReq, GetArticlesReq } from 'interface/article';
-import { PaginationData, PaginationOptions } from 'interface/common';
+import { PaginationData } from 'interface/common';
 import { DeleteResult, getRepository, Repository } from 'typeorm';
 // tslint:disable-next-line: no-var-requires
 const slugify = require('slug');
@@ -17,7 +18,9 @@ export class ArticleService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(ClassificationEntity)
-    private readonly classificationRepository: Repository<ClassificationEntity>
+    private readonly classificationRepository: Repository<ClassificationEntity>,
+    @InjectRepository(TagEntity)
+    private readonly tagRepository: Repository<TagEntity>
   ) {}
 
   /**
@@ -25,14 +28,30 @@ export class ArticleService {
    *
    */
   async findAll(query: GetArticlesReq): Promise<PaginationData<ArticleEntity>> {
-    const { index = 1, size = 10 }: PaginationOptions = query || {};
+    const index: number = Number(query.index) || 1;
+    const size: number = Number(query.size) || 10;
     const qb = await getRepository(ArticleEntity)
       .createQueryBuilder('article')
       .innerJoinAndSelect('article.author', 'author')
-      .leftJoinAndSelect('article.classification', 'classification');
+      .leftJoinAndSelect('article.classification', 'classification')
+      .leftJoinAndSelect('article.tags', 'tag')
+      .select([
+        'article.id',
+        'article.title',
+        'article.description',
+        'article.content',
+        'article.createdAt',
+        'article.updatedAt',
+        'author.username',
+        'author.image',
+        'classification.id',
+        'classification.title',
+        'tag.id',
+        'tag.content'
+      ]);
     qb.where('1 = 1');
 
-    qb.orderBy('article.created', 'DESC');
+    qb.orderBy('article.createdAt', 'DESC');
     const total = await qb.getCount();
     qb.limit(size);
     qb.offset(index - 1);
@@ -44,8 +63,8 @@ export class ArticleService {
    * 获取文章详情
    *
    */
-  async findOne(slug: string): Promise<ArticleEntity> {
-    const article = await this.articleRepository.findOne({ slug });
+  async findOne(id: number): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findOne({ id });
     return article;
   }
 
@@ -55,8 +74,9 @@ export class ArticleService {
    */
   async create(
     userId: number,
-    articleData: CreateArticleReq
-  ): Promise<ArticleEntity> {
+    articleData: CreateArticleReq,
+    tags: number[]
+  ): Promise<number> {
     const article = new ArticleEntity();
     article.title = articleData.title;
     article.slug = this.slugify(articleData.title);
@@ -66,7 +86,7 @@ export class ArticleService {
     if (!author) {
       throw new HttpException('该author不存在', HttpStatus.BAD_REQUEST);
     }
-    article.author = await this.userRepository.findOne({ id: userId });
+    article.author = author;
 
     const classification = await this.classificationRepository.findOne({
       id: articleData.classificationId
@@ -74,8 +94,14 @@ export class ArticleService {
     if (classification) {
       article.classification = classification;
     }
+    if (tags && tags.length) {
+      const existTags = await this.tagRepository.findByIds(tags);
+      article.tags = existTags;
+    } else {
+      article.tags = [];
+    }
     const newArticle = await this.articleRepository.save(article);
-    return newArticle;
+    return newArticle.id;
   }
 
   /**
@@ -83,25 +109,40 @@ export class ArticleService {
    *
    */
   async update(
-    slug: string,
-    articleData: CreateArticleReq
-  ): Promise<ArticleEntity> {
-    const article = await this.articleRepository.findOne({ slug });
+    id: number,
+    articleData: CreateArticleReq,
+    tags: number[]
+  ): Promise<number> {
+    const article = await this.articleRepository.findOne({ id });
     if (!article) {
       throw new HttpException('该文章不存在', HttpStatus.BAD_REQUEST);
     }
-    const updatedArticle = await this.articleRepository.save({
+    if (articleData.classificationId) {
+      const classification = await this.classificationRepository.findOne({
+        id: articleData.classificationId
+      });
+      if (classification) {
+        article.classification = classification;
+      }
+    }
+    if (tags) {
+      const existTags = await this.tagRepository.findByIds(tags);
+      article.tags = existTags;
+    }
+    await this.articleRepository.save({
       ...article,
-      ...articleData
+      title: articleData.title,
+      description: articleData.description,
+      content: articleData.content
     });
-    return updatedArticle;
+    return id;
   }
   /**
    * 删除
    *
    */
-  async delete(slug: string): Promise<DeleteResult> {
-    return this.articleRepository.delete({ slug });
+  async delete(id: number): Promise<DeleteResult> {
+    return this.articleRepository.delete({ id });
   }
   slugify(title: string) {
     // tslint:disable-next-line:no-bitwise

@@ -1,5 +1,7 @@
 import { ClassificationEntity } from '@/core/entity/classification.entity';
+import { TagEntity } from '@/core/entity/tag.entity';
 import { UserEntity } from '@/core/entity/user.entity';
+import { AuthMiddleware } from '@/core/middleware/auth';
 import { UserModule } from '@/user/user.module';
 import {
   MiddlewareConsumer,
@@ -14,7 +16,12 @@ import { ArticleService } from './article.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ArticleEntity, UserEntity, ClassificationEntity]),
+    TypeOrmModule.forFeature([
+      ArticleEntity,
+      UserEntity,
+      ClassificationEntity,
+      TagEntity
+    ]),
     UserModule
   ],
   providers: [ArticleService],
@@ -22,6 +29,27 @@ import { ArticleService } from './article.service';
 })
 export class ArticleModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    consumer.apply().forRoutes({ path: 'article', method: RequestMethod.GET });
+    consumer.apply(AuthMiddleware).forRoutes(
+      {
+        path: 'article/all',
+        method: RequestMethod.GET
+      },
+      {
+        path: 'article',
+        method: RequestMethod.POST
+      },
+      {
+        path: 'article/:id',
+        method: RequestMethod.GET
+      },
+      {
+        path: 'article/:id',
+        method: RequestMethod.PUT
+      },
+      {
+        path: 'article/:id',
+        method: RequestMethod.DELETE
+      }
+    );
   }
 }

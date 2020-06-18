@@ -1,42 +1,39 @@
-import { LoginUserDto } from '@/core/dto/user';
-import { UserWhthToken } from '@/core/interface/user';
-import {
-  Body,
-  Controller,
-  HttpException,
-  Post,
-  UsePipes,
-  ValidationPipe
-} from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import {User} from '@/core/decorators/user';
+import {UserRO} from '@/core/interface/user';
+import {Body, Controller, Get, HttpException, Post} from '@nestjs/common';
+import {ApiBearerAuth} from '@nestjs/swagger';
+import {UserService} from './user.service';
 
 @ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UsePipes(new ValidationPipe())
-  @Post('users/login')
-  async login(
-    @Body('user') loginUserDto: LoginUserDto
-  ): Promise<UserWhthToken> {
-    const user = await this.userService.findOne(loginUserDto);
+  @Get()
+  async findMe(@User('id')id: number): Promise < UserRO > {
+    return await this
+      .userService
+      .findById(id);
+  }
 
-    const errors = { User: ' not found' };
+  @Post('login')
+  async login(@Body('email')email: string, @Body('password')password: string): Promise < string > {
+    const user = await this
+      .userService
+      .findOne({email, password});
+
+    const errors = {
+      User: ' not found'
+    };
     if (!user) {
-      throw new HttpException({ errors }, 401);
+      throw new HttpException({
+        errors
+      }, 401);
     }
 
-    const token = await this.userService.generateJWT(user);
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        image: user.image
-      },
-      token
-    };
+    const token = await this
+      .userService
+      .generateJWT(user);
+    return token;
   }
 }

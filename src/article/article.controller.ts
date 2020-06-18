@@ -18,36 +18,38 @@ import { ArticleService } from './article.service';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  @Get()
+  @Get('all')
   async findAll(
     @Query() query: GetArticlesReq
   ): Promise<PaginationData<ArticleEntity>> {
     return await this.articleService.findAll(query);
   }
 
-  @Get(':slug')
-  async findOne(@Param('slug') slug: string): Promise<ArticleEntity> {
-    return await this.articleService.findOne(slug);
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<ArticleEntity> {
+    return await this.articleService.findOne(id);
   }
 
   @Post()
   async create(
     @User('id') userId: number,
-    @Body('article') articleData: CreateArticleReq
+    @Body('article') articleData: CreateArticleReq,
+    @Body('tags') tags: number[]
   ) {
-    return this.articleService.create(userId, articleData);
+    return this.articleService.create(userId, articleData, tags);
   }
 
-  @Put()
+  @Put(':id')
   async update(
-    @Param('slug') slug: string,
-    @Body('article') articleData: CreateArticleReq
-  ): Promise<ArticleEntity> {
-    return this.articleService.update(slug, articleData);
+    @Param('id') id: number,
+    @Body('article') articleData: CreateArticleReq,
+    @Body('tags') tags: number[]
+  ): Promise<number> {
+    return this.articleService.update(id, articleData, tags);
   }
 
-  @Delete()
-  async delete(@Param('slug') slug: string): Promise<DeleteResult> {
-    return this.articleService.delete(slug);
+  @Delete(':id')
+  async delete(@Param('id') id: number): Promise<DeleteResult> {
+    return this.articleService.delete(id);
   }
 }

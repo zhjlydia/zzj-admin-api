@@ -3,7 +3,7 @@ export interface CreateArticleReq {
   title: string;
   description: string;
   content: string;
-  classificationId: number;
+  classificationId?: number;
 }
 
 export interface GetArticlesReq extends PaginationOptions {

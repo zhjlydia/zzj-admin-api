@@ -1,5 +1,6 @@
 import { SECRET } from '@/core/constants/secret';
 import { LoginUserDto } from '@/core/dto/user';
+import { UserRO } from '@/core/interface/user';
 import { Injectable } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,28 +24,47 @@ export class UserService {
 
     return await this.userRepository.findOne(findOneOptions);
   }
-  async findById(id: number) {
-    const user = this.userRepository.findOne(id);
+
+  async findById(id: number): Promise<UserRO> {
+    const user = await this.userRepository.findOne(id);
+
     if (!user) {
-      const error = { User: 'not found' };
-      throw new HttpException({ error }, 401);
+      const errors = {
+        User: ' not found'
+      };
+      throw new HttpException(
+        {
+          errors
+        },
+        401
+      );
     }
-    return user;
+
+    return this.buildUserRO(user);
   }
 
   public generateJWT(user) {
     const today = new Date();
     const exp = new Date(today);
-    exp.setDate(today.getDate() + 60);
+    exp.setDate(today.getDate() + 1);
 
     return jwt.sign(
       {
         id: user.id,
-        username: user.username,
-        email: user.email,
         exp: exp.getTime() / 1000
       },
       SECRET
     );
+  }
+
+  private buildUserRO(user: UserEntity) {
+    const userRO = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      image: user.image
+    };
+
+    return userRO;
   }
 }

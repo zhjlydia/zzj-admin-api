@@ -22,17 +22,17 @@ export class ClassificationEntity {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP'
   })
-  created: Date;
+  createdAt: Date;
 
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP'
   })
-  updated: Date;
+  updatedAt: Date;
 
   @BeforeUpdate()
   updateTimestamp() {
-    this.updated = new Date();
+    this.updatedAt = new Date();
   }
 
   @OneToMany(

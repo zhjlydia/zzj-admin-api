@@ -1,6 +1,16 @@
-import { BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 import { ClassificationEntity } from './classification.entity';
 import { CommentEntity } from './comment.entity';
+import { TagEntity } from './tag.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('article')
@@ -24,17 +34,17 @@ export class ArticleEntity {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP'
   })
-  created: Date;
+  createdAt: Date;
 
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP'
   })
-  updated: Date;
+  updatedAt: Date;
 
   @BeforeUpdate()
   updateTimestamp() {
-    this.updated = new Date();
+    this.updatedAt = new Date();
   }
 
   @ManyToOne(
@@ -49,11 +59,21 @@ export class ArticleEntity {
   )
   classification: ClassificationEntity;
 
+  @ManyToMany(
+    type => TagEntity,
+    tag => tag.articles
+  )
+  @JoinTable({
+    name: 'article_tag'
+  })
+  tags: TagEntity[];
+
   @OneToMany(
     type => CommentEntity,
     comment => comment.article
   )
   comments: CommentEntity[];
+
   @Column({ default: 0 })
   favoriteCount: number;
 }

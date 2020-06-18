@@ -1,4 +1,4 @@
-export interface User {
+export interface UserRO {
   id: number;
   username: string;
   email: string;
@@ -6,6 +6,6 @@ export interface User {
 }
 
 export interface UserWhthToken {
-  user: User;
+  user: UserRO;
   token: string;
 }
