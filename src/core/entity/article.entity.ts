@@ -8,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { ClassificationEntity } from './classification.entity';
+import { CategoryEntity } from './category.entity';
 import { CommentEntity } from './comment.entity';
 import { TagEntity } from './tag.entity';
 import { UserEntity } from './user.entity';
@@ -54,10 +54,10 @@ export class ArticleEntity {
   author: UserEntity;
 
   @ManyToOne(
-    type => ClassificationEntity,
-    classification => classification.articles
+    type => CategoryEntity,
+    category => category.articles
   )
-  classification: ClassificationEntity;
+  category: CategoryEntity;
 
   @ManyToMany(
     type => TagEntity,

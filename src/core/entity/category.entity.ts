@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 
-@Entity('classification')
-export class ClassificationEntity {
+@Entity('category')
+export class CategoryEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -37,7 +37,7 @@ export class ClassificationEntity {
 
   @OneToMany(
     type => ArticleEntity,
-    article => article.classification
+    article => article.category
   )
   articles: ArticleEntity[];
 }

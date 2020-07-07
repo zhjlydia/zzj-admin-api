@@ -1,6 +1,5 @@
 import { SECRET } from '@/core/constants/secret';
-import { LoginUserDto } from '@/core/dto/user';
-import { UserRO } from '@/core/interface/user';
+import { UserDto, UserVo } from '@/core/models/user';
 import { Injectable } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,16 +15,16 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>
   ) {}
 
-  async findOne(loginUserDto: LoginUserDto): Promise<UserEntity> {
+  async findOne(user: UserVo): Promise<UserEntity> {
     const findOneOptions = {
-      email: loginUserDto.email,
-      password: crypto.createHmac('sha256', loginUserDto.password).digest('hex')
+      email: user.email,
+      password: crypto.createHmac('sha256', user.password).digest('hex')
     };
 
     return await this.userRepository.findOne(findOneOptions);
   }
 
-  async findById(id: number): Promise<UserRO> {
+  async findById(id: number): Promise<UserDto> {
     const user = await this.userRepository.findOne(id);
 
     if (!user) {
@@ -39,8 +38,7 @@ export class UserService {
         401
       );
     }
-
-    return this.buildUserRO(user);
+    return this.buildUserDto(user);
   }
 
   public generateJWT(user) {
@@ -57,14 +55,14 @@ export class UserService {
     );
   }
 
-  private buildUserRO(user: UserEntity) {
-    const userRO = {
+  private buildUserDto(user: UserEntity) {
+    const userDto = {
       id: user.id,
       username: user.username,
       email: user.email,
       image: user.image
     };
 
-    return userRO;
+    return userDto;
   }
 }

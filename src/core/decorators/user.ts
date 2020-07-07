@@ -6,11 +6,13 @@ export const User = createParamDecorator((data, req) => {
   if (!!req.$current) {
     return !!data ? req.$current[data] : req.$current;
   }
-  const token = req.headers.authorization
-    ? (req.headers.authorization as string).split(' ')
-    : null;
-  if (token && token[1]) {
-    const decoded: any = jwt.verify(token[1], SECRET);
+  const authHeaders = req.headers.authorization;
+  let token = '';
+  if (authHeaders) {
+    token = (authHeaders as string).split(' ')[1];
+  }
+  if (token) {
+    const decoded: any = jwt.verify(token, SECRET);
     return !!data ? decoded[data] : decoded.user;
   }
 });

@@ -1,4 +1,8 @@
-export interface UserRO {
+export interface UserVo {
+  email: string;
+  password: string;
+}
+export class UserDto {
   id: number;
   username: string;
   email: string;
@@ -6,6 +10,6 @@ export interface UserRO {
 }
 
 export interface UserWhthToken {
-  user: UserRO;
+  user: UserDto;
   token: string;
 }

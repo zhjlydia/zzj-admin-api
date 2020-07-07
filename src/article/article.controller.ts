@@ -11,18 +11,20 @@ import {
   Query
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
-import { CreateArticleReq, GetArticlesReq } from '../core/interface/article';
-import { PaginationData } from '../core/interface/common';
+import { ArticleVo } from '../core/models/article';
+import { PaginationData } from '../core/models/common';
 import { ArticleService } from './article.service';
+
 @Controller('article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get('all')
   async findAll(
-    @Query() query: GetArticlesReq
+    @Query('index') index: number,
+    @Query('size') size: number
   ): Promise<PaginationData<ArticleEntity>> {
-    return await this.articleService.findAll(query);
+    return await this.articleService.findAll(Number(index) || 0, Number(size));
   }
 
   @Get(':id')
@@ -31,21 +33,16 @@ export class ArticleController {
   }
 
   @Post()
-  async create(
-    @User('id') userId: number,
-    @Body('article') articleData: CreateArticleReq,
-    @Body('tags') tags: number[]
-  ) {
-    return this.articleService.create(userId, articleData, tags);
+  async create(@User('id') userId: number, @Body() article: ArticleVo) {
+    return this.articleService.create(userId, article);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body('article') articleData: CreateArticleReq,
-    @Body('tags') tags: number[]
+    @Body() article: ArticleVo
   ): Promise<number> {
-    return this.articleService.update(id, articleData, tags);
+    return this.articleService.update(id, article);
   }
 
   @Delete(':id')

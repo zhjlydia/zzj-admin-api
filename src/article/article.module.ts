@@ -1,4 +1,4 @@
-import { ClassificationEntity } from '@/core/entity/classification.entity';
+import { CategoryEntity } from '@/core/entity/category.entity';
 import { TagEntity } from '@/core/entity/tag.entity';
 import { UserEntity } from '@/core/entity/user.entity';
 import { AuthMiddleware } from '@/core/middleware/auth';
@@ -19,7 +19,7 @@ import { ArticleService } from './article.service';
     TypeOrmModule.forFeature([
       ArticleEntity,
       UserEntity,
-      ClassificationEntity,
+      CategoryEntity,
       TagEntity
     ]),
     UserModule

@@ -16,7 +16,7 @@
       "@/*": ["src/*"],
       "core/*": ["src/core/*"],
       "entity/*": ["src/core/entity/*"],
-      "interface/*": ["src/core/interface/*"]
+      "interface/*": ["src/core/models/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

@@ -24,7 +24,6 @@
     "@nestjs/core": "^6.10.11",
     "@nestjs/microservices": "^6.10.11",
     "@nestjs/platform-express": "^6.10.11",
-    "@nestjs/swagger": "^4.0.9",
     "@nestjs/typeorm": "^6.0.0",
     "@nestjs/websockets": "^6.10.11",
     "swagger-ui-express": "^4.1.4",
