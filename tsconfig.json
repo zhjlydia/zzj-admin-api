@@ -14,9 +14,9 @@
     "incremental": true,
     "paths": {
       "@/*": ["src/*"],
-      "core/*": ["src/core/*"],
-      "entity/*": ["src/core/entity/*"],
-      "interface/*": ["src/core/models/*"]
+      "core/*": ["core/src/*"],
+      "entity/*": ["core/src/entity/*"],
+      "interface/*": ["core/src/models/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
