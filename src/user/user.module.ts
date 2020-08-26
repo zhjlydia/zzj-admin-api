@@ -1,4 +1,4 @@
-import { AuthMiddleware } from '@/core/middleware/auth';
+import { AuthMiddleware } from '@/common/middleware/auth';
 import {
   MiddlewareConsumer,
   Module,

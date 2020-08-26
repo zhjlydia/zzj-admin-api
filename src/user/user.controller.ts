@@ -1,6 +1,6 @@
-import { User } from '@/core/decorators/user';
-import { UserDto } from '@/core/models/user';
+import { User } from '@/common/decorators/user';
 import { Body, Controller, Get, HttpException, Post } from '@nestjs/common';
+import { UserDto } from 'core/models/user';
 import { UserService } from './user.service';
 
 @Controller('user')

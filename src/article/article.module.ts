@@ -1,11 +1,11 @@
-import { CategoryEntity } from '@/core/entity/category.entity';
-import { TagEntity } from '@/core/entity/tag.entity';
-import { UserEntity } from '@/core/entity/user.entity';
-import { AuthMiddleware } from '@/core/middleware/auth';
+import { AuthMiddleware } from '@/common/middleware/auth';
 import { UserModule } from '@/user/user.module';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ArticleEntity } from '../core/entity/article.entity';
+import { ArticleEntity } from 'core/entity/article.entity';
+import { CategoryEntity } from 'core/entity/category.entity';
+import { TagEntity } from 'core/entity/tag.entity';
+import { UserEntity } from 'core/entity/user.entity';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 

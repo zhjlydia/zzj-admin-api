@@ -1,4 +1,3 @@
-import { TagEntity } from '@/core/entity/tag.entity';
 import {
   Body,
   Controller,
@@ -8,6 +7,7 @@ import {
   Post,
   Put
 } from '@nestjs/common';
+import { TagEntity } from 'core/entity/tag.entity';
 import { DeleteResult } from 'typeorm';
 import { TagService } from './tag.service';
 

@@ -1,5 +1,4 @@
-import { User } from '@/core/decorators/user';
-import { ArticleEntity } from '@/core/entity/article.entity';
+import { User } from '@/common/decorators/user';
 import {
   Body,
   Controller,
@@ -10,9 +9,10 @@ import {
   Put,
   Query
 } from '@nestjs/common';
+import { ArticleEntity } from 'core/entity/article.entity';
+import { ArticleVo } from 'core/models/article';
+import { PaginationData } from 'core/models/common';
 import { DeleteResult } from 'typeorm';
-import { ArticleVo } from '../core/models/article';
-import { PaginationData } from '../core/models/common';
 import { ArticleService } from './article.service';
 
 @Controller('article')

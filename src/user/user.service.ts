@@ -1,8 +1,8 @@
-import { SECRET } from '@/core/constants/secret';
-import { UserDto, UserVo } from '@/core/models/user';
+import { SECRET } from '@/common/secret';
 import { Injectable } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserDto, UserVo } from 'core/models/user';
 import * as crypto from 'crypto';
 import { UserEntity } from 'entity/user.entity';
 import jwt from 'jsonwebtoken';

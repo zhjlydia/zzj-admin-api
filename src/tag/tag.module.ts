@@ -1,4 +1,4 @@
-import { AuthMiddleware } from '@/core/middleware/auth';
+import { AuthMiddleware } from '@/common/middleware/auth';
 import { UserModule } from '@/user/user.module';
 import {
   MiddlewareConsumer,
@@ -7,7 +7,7 @@ import {
   RequestMethod
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TagEntity } from '../core/entity/tag.entity';
+import { TagEntity } from 'core/entity/tag.entity';
 import { TagController } from './tag.controller';
 import { TagService } from './tag.service';
 

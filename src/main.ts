@@ -5,9 +5,9 @@ import { AppModule } from './app.module';
 
 alias.addAliases({
   '@': __dirname,
-  'core': path.join(__dirname, 'core'),
-  'entity': path.join(__dirname, 'core/entity'),
-  'model': path.resolve(__dirname, 'core/model')
+  'core': path.join(__dirname, '../core/src'),
+  'entity': path.join(__dirname, '../core/src/entity'),
+  'model': path.resolve(__dirname, '../core/src/model')
 });
 
 async function bootstrap() {

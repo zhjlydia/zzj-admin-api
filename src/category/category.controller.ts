@@ -1,4 +1,3 @@
-import { CategoryEntity } from '@/core/entity/category.entity';
 import {
   Body,
   Controller,
@@ -8,6 +7,7 @@ import {
   Post,
   Put
 } from '@nestjs/common';
+import { CategoryEntity } from 'core/entity/category.entity';
 import { DeleteResult } from 'typeorm';
 import { CategoryService } from './category.service';
 
