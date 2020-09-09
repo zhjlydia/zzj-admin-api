@@ -1,4 +1,5 @@
 import { AuthMiddleware } from '@/common/middleware/auth';
+import { OssService } from '@/common/services/oss';
 import { UserModule } from '@/user/user.module';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +15,7 @@ import { ArticleService } from './article.service';
     TypeOrmModule.forFeature([ArticleEntity, UserEntity, CategoryEntity, TagEntity]),
     UserModule
   ],
-  providers: [ArticleService],
+  providers: [ArticleService, OssService],
   controllers: [ArticleController]
 })
 export class ArticleModule implements NestModule {

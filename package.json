@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^6.10.11",
     "@nestjs/typeorm": "^6.0.0",
     "@nestjs/websockets": "^6.10.11",
+    "@nestjs/config":"^0.5.0",
     "swagger-ui-express": "^4.1.4",
     "rimraf": "^3.0.0",
     "class-transformer": "^0.2.3",
@@ -40,7 +41,9 @@
     "typeorm": "^0.2.15",
     "typescript": "^3.7.3",
     "module-alias": "^2.2.2",
-    "ali-oss": "^6.10.0"
+    "ali-oss": "^6.10.0",
+    "nanoid":"^2.1.0",
+    "dayjs":"^1.8.35"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.12.9",
@@ -52,6 +55,7 @@
     "@types/supertest": "^2.0.8",
     "@types/module-alias": "^2.0.0",
     "@types/ali-oss":"^6.0.5",
+    "@types/nanoid":"^2.1.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",

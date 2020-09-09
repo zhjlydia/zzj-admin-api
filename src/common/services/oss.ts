@@ -1,126 +1,75 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import OSS from 'ali-oss';
 
 @Injectable()
-export class OssHelper {
+export class OssService {
   private client: any;
-  public constructor() {
+  private readonly prefix: string = 'blog';
+  private baseUrl = '';
+  constructor(private configService: ConfigService) {
     this.client = new OSS({
-      accessKeyId: '',
-      accessKeySecret: '',
-      bucket: '',
-      endpoint: 'http://oss-cn-hangzhou-internal.aliyuncs.com'
+      accessKeyId: this.configService.get<string>('OSSACCESSKEY'),
+      accessKeySecret: this.configService.get<string>('OSSACCESSSECRET'),
+      bucket: this.configService.get<string>('OSSBUCKET'),
+      endpoint: this.configService.get<string>('OSSENDPOINT')
     });
+    this.baseUrl = this.configService.get<string>('OSSRESOURCEDOMAIN').replace(/\/*$/, '/');
   }
+
   /**
-   * 上传文件
-   * @param localPath
-   * @param ossPath
-   * @param size
+   * 上传文件至OSS并返回完整url
+   *
+   * @param filename 文件名
+   * @param file 文件路径或二进制数据
+   * @param options 选项
+   * @param prefix 文件路径前缀
    */
-  public async uploadFile(
-    localPath: string,
-    ossPath: string,
-    size: number
-  ): Promise<string> {
-    if (size > 5 * 1024 * 1024) {
-      // 设置MB
-      return await this.resumeUpload(ossPath, localPath);
+  async put(
+    filename: string,
+    file: Buffer | string,
+    prefix?: string,
+    options?: OSS.PutObjectOptions
+  ) {
+    filename = (prefix ? prefix : this.prefix) + filename;
+    const { res } = await this.client.put(filename, file, options);
+    // 将文件设置为公共可读
+    await this.client.putACL(filename, 'public-read');
+    if (res.status === 200) {
+      return this.getUri(filename);
     } else {
-      return await this.upload(ossPath, localPath);
-    }
-  }
-  // oss put上传文件
-  private async upload(ossPath: string, localPath: string): Promise<string> {
-    let res;
-    try {
-      res = await this.client.put(ossPath, localPath);
-      // 将文件设置为公共可读
-      await this.client.putACL(ossPath, 'public-read');
-    } catch (error) {
-      console.log(error);
-    }
-    return res.url;
-  }
-  // oss 断点上传
-  private async resumeUpload(ossPath: string, localPath: string) {
-    let checkpoint: any = 0;
-    let bRet = '';
-    for (let i = 0; i < 3; i++) {
-      try {
-        const result = this.client.get().multipartUpload(ossPath, localPath, {
-          checkpoint,
-          async progress(percent: number, cpt: any) {
-            checkpoint = cpt;
-          }
-        });
-        // 将文件设置为公共可读
-        await this.client.putACL(ossPath, 'public-read');
-        bRet = result.url;
-        break;
-      } catch (error) {
-        // console.log(error)
-      }
-    }
-    console.log('resumeUpload:::::', bRet);
-    return bRet;
-  }
-  /**
-   * 删除一个文件
-   */
-  public async deleteOne(filepath: string) {
-    if (filepath == null) {
-      return;
-    }
-    try {
-      const result = this.client.delete(filepath);
-    } catch (e) {
-      console.log(e);
+      return '';
     }
   }
 
   /**
-   * 删除多个文件
-   * @param filepathArr
+   * 获取文件夹下图片列表
+   *
+   * @param prefix 文件路径前缀
    */
-  public async deleteMulti(filepathArr: string[]): Promise<void> {
-    try {
-      const result = this.client.deleteMulti(filepathArr, { quiet: true });
-      // console.log(result);
-    } catch (e) {
-      console.log(e);
-    }
+  async list(prefix?: string) {
+    const res = await this.client.list(
+      {
+        prefix,
+        'max-keys': 100
+      },
+      { timeout: 1000 }
+    );
+    return res;
   }
-  /**
-   * 获取文件的url
-   * @param filePath
-   */
-  public async getFileSignatureUrl(filePath: string): Promise<string> {
-    if (filePath == null) {
-      console.log('get file signature failed: file name can not be empty');
-      return null;
-    }
-    let result = '';
-    try {
-      result = this.client.signatureUrl(filePath, { expires: 36000 });
-    } catch (err) {
-      console.log(err);
-    }
 
-    return result;
+  /**
+   * 获取文件夹下图片列表
+   *
+   * @param prefix 文件路径前缀
+   */
+  async delete(name: string) {
+    const res = await this.client.delete(name, { timeout: 1000 });
+    return res;
   }
-  // 判断文件是否存在
-  public async existObject(ossPath: string): Promise<boolean> {
-    try {
-      const result = this.client.get(ossPath);
-      if (result.res.status == 200) {
-        return true;
-      }
-    } catch (e) {
-      if (e.code == 'NoSuchKey') {
-        return false;
-      }
-    }
-    return false;
+
+  public getUri(url: string) {
+    return this.baseUrl + url.replace(/^\/+/, '');
   }
+
 }

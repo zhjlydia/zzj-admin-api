@@ -39,6 +39,7 @@ export class ArticleService {
       .select([
         'article.id',
         'article.title',
+        'article.image',
         'article.description',
         'article.content',
         'article.createdAt',
@@ -74,6 +75,7 @@ export class ArticleService {
       .select([
         'article.id',
         'article.title',
+        'article.image',
         'article.description',
         'article.content',
         'article.createdAt',
@@ -98,6 +100,7 @@ export class ArticleService {
   async create(userId: number, articleData: ArticleVo): Promise<number> {
     const article = new ArticleEntity();
     article.title = articleData.title;
+    article.image = articleData.image;
     article.slug = this.slugify(articleData.title);
     article.description = articleData.description;
     article.content = articleData.content;
@@ -147,6 +150,7 @@ export class ArticleService {
     await this.articleRepository.save({
       ...article,
       title: articleData.title,
+      image: articleData.image,
       description: articleData.description,
       content: articleData.content
     });
