@@ -17,7 +17,7 @@ export class UserController {
     @Body('email') email: string,
     @Body('password') password: string
   ): Promise<string> {
-    const user = await this.userService.findOne({ email, password });
+    const user = await this.userService.findOne({ email, password, isAdmin: true });
 
     const errors = {
       User: ' not found'
