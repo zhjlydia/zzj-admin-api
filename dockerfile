@@ -8,6 +8,7 @@ WORKDIR /var/app
 FROM deps AS compiler
 COPY package*.json tsconfig*.json ./
 COPY src ./src
+COPY core ./core
 RUN set -ex && \
     npm i --ignore-scripts && \
     npm run build
@@ -26,4 +27,4 @@ COPY --from=installer /var/app/package*.json ./
 COPY --from=compiler /var/app/dist ./dist
 
 EXPOSE 3000
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]
