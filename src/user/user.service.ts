@@ -2,9 +2,9 @@ import { SECRET } from '@/common/secret';
 import { Injectable } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'core/entity/user.entity';
 import { UserDto, UserVo } from 'core/models/user';
 import * as crypto from 'crypto';
-import { UserEntity } from 'entity/user.entity';
 import jwt from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 
