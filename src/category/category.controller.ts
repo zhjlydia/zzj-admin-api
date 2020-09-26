@@ -5,9 +5,11 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import { CategoryEntity } from 'core/entity/category.entity';
+import { PaginationData } from 'core/models/common';
 import { DeleteResult } from 'typeorm';
 import { CategoryService } from './category.service';
 
@@ -16,8 +18,16 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get('all')
-  async findAll(): Promise<CategoryEntity[]> {
-    return await this.categoryService.findAll();
+  async findAll(
+    @Query('index') index: number,
+    @Query('size') size: number
+    ): Promise<PaginationData<CategoryEntity>> {
+    return await this.categoryService.findAll(Number(index) || 0, Number(size));
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<CategoryEntity> {
+    return await this.categoryService.findOne(id);
   }
 
   @Post()

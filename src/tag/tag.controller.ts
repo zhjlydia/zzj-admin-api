@@ -5,9 +5,11 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import { TagEntity } from 'core/entity/tag.entity';
+import { PaginationData } from 'core/models/common';
 import { DeleteResult } from 'typeorm';
 import { TagService } from './tag.service';
 
@@ -16,8 +18,16 @@ export class TagController {
   constructor(private readonly tagService: TagService) {}
 
   @Get('all')
-  async findAll(): Promise<TagEntity[]> {
-    return await this.tagService.findAll();
+  async findAll(
+    @Query('index') index: number,
+    @Query('size') size: number
+  ): Promise<PaginationData<TagEntity>> {
+    return await this.tagService.findAll(Number(index) || 0, Number(size));
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<TagEntity> {
+    return await this.tagService.findOne(id);
   }
 
   @Post()

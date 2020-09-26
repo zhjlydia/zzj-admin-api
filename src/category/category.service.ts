@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationData } from 'core/models/common';
 import { CategoryEntity } from 'entity/category.entity';
 import { DeleteResult, Repository } from 'typeorm';
 
@@ -14,8 +15,21 @@ export class CategoryService {
    * 获取分类列表
    *
    */
-  async findAll(): Promise<CategoryEntity[]> {
-    return await this.categoryRepository.find();
+  async findAll(
+    index: number,
+    size: number
+    ): Promise<PaginationData<CategoryEntity>> {
+      const res = await this.categoryRepository.findAndCount({take: size, skip: (index - 1) * size});
+      return { index, size, list: res[0], total: res[1] };
+  }
+
+  /**
+   * 获取分类详情
+   *
+   */
+  async findOne(id: number): Promise<CategoryEntity> {
+    const res = await this.categoryRepository.findOne({id});
+    return res;
   }
 
   /**

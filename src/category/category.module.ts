@@ -24,6 +24,10 @@ export class CategoryModule implements NestModule {
         method: RequestMethod.GET
       },
       {
+        path: 'category/:id',
+        method: RequestMethod.GET
+      },
+      {
         path: 'category',
         method: RequestMethod.POST
       },

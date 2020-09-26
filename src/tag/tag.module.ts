@@ -24,6 +24,10 @@ export class TagModule implements NestModule {
         method: RequestMethod.GET
       },
       {
+        path: 'tag/:id',
+        method: RequestMethod.GET
+      },
+      {
         path: 'tag',
         method: RequestMethod.POST
       },
