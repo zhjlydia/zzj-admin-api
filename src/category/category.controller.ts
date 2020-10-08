@@ -20,9 +20,10 @@ export class CategoryController {
   @Get('all')
   async findAll(
     @Query('index') index: number,
-    @Query('size') size: number
+    @Query('size') size: number,
+    @Query('module') module?: string
     ): Promise<PaginationData<CategoryEntity>> {
-    return await this.categoryService.findAll(Number(index) || 0, Number(size));
+    return await this.categoryService.findAll(Number(index) || 0, Number(size), module);
   }
 
   @Get(':id')
@@ -33,18 +34,20 @@ export class CategoryController {
   @Post()
   async create(
     @Body('title') title: string,
-    @Body('description') description: string
+    @Body('description') description: string,
+    @Body('module') module: string
   ): Promise<number> {
-    return this.categoryService.create(title, description);
+    return this.categoryService.create(title, description, module);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: number,
     @Body('title') title: string,
-    @Body('description') description: string
+    @Body('description') description: string,
+    @Body('module') module: string
   ): Promise<number> {
-    return this.categoryService.update(id, title, description);
+    return this.categoryService.update(id, title, description, module);
   }
 
   @Delete(':id')

@@ -108,7 +108,7 @@ export class ProjectService {
     project.content = projectData.content;
     project.github = projectData.github;
     project.role = projectData.role;
-    project.tags = projectData.tags;
+    // project.tags = projectData.tags;
     project.url = projectData.url;
     project.startedAt = projectData.startedAt;
     project.endedAt = projectData.endedAt;

@@ -31,16 +31,17 @@ export class TagController {
   }
 
   @Post()
-  async create(@Body('content') content: string): Promise<number> {
-    return this.tagService.create(content);
+  async create(@Body('content') content: string, @Body('module') module: string): Promise<number> {
+    return this.tagService.create(content, module);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body('content') content: string
+    @Body('content') content: string,
+    @Body('module') module: string
   ): Promise<number> {
-    return this.tagService.update(id, content);
+    return this.tagService.update(id, content, module);
   }
 
   @Delete(':id')

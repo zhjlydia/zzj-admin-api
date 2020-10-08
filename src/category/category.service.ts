@@ -17,9 +17,16 @@ export class CategoryService {
    */
   async findAll(
     index: number,
-    size: number
+    size: number,
+    module?: string
     ): Promise<PaginationData<CategoryEntity>> {
-      const res = await this.categoryRepository.findAndCount({take: size, skip: (index - 1) * size});
+      let res = null;
+      if (module) {
+        res = await this.categoryRepository.findAndCount({where: {module}, take: size, skip: (index - 1) * size});
+      } else {
+        res = await this.categoryRepository.findAndCount({take: size, skip: (index - 1) * size});
+      }
+
       return { index, size, list: res[0], total: res[1] };
   }
 
@@ -36,10 +43,11 @@ export class CategoryService {
    * 创建
    *
    */
-  async create(title: string, description: string): Promise<number> {
+  async create(title: string, description: string, module: string): Promise<number> {
     const category = new CategoryEntity();
     category.title = title;
     category.description = description;
+    category.module = module;
     const newCategory = await this.categoryRepository.save(category);
     return newCategory.id;
   }
@@ -51,7 +59,8 @@ export class CategoryService {
   async update(
     id: number,
     title: string,
-    description: string
+    description: string,
+    module: string
   ): Promise<number> {
     const category = await this.categoryRepository.findOne({ id });
     if (!category) {
@@ -59,6 +68,7 @@ export class CategoryService {
     }
     category.title = title;
     category.description = description;
+    category.module = module;
     await this.categoryRepository.save(category);
     return id;
   }

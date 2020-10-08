@@ -116,8 +116,8 @@ export class ArticleService {
     if (category) {
       article.category = category;
     }
-    if (articleData.tags && articleData.tags.length) {
-      const existTags = await this.tagRepository.findByIds(articleData.tags);
+    if (articleData.tagIds && articleData.tagIds.length) {
+      const existTags = await this.tagRepository.findByIds(articleData.tagIds);
       article.tags = existTags;
     } else {
       article.tags = [];
@@ -143,8 +143,8 @@ export class ArticleService {
         article.category = category;
       }
     }
-    if (articleData.tags) {
-      const existTags = await this.tagRepository.findByIds(articleData.tags);
+    if (articleData.tagIds) {
+      const existTags = await this.tagRepository.findByIds(articleData.tagIds);
       article.tags = existTags;
     }
     await this.articleRepository.save({

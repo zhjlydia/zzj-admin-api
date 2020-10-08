@@ -36,9 +36,10 @@ export class TagService {
    * 创建
    *
    */
-  async create(content: string): Promise<number> {
+  async create(content: string, module: string): Promise<number> {
     const tag = new TagEntity();
     tag.content = content;
+    tag.module = module;
     const newTag = await this.tagRepository.save(tag);
     return newTag.id;
   }
@@ -47,12 +48,13 @@ export class TagService {
    * 修改
    *
    */
-  async update(id: number, content: string): Promise<number> {
+  async update(id: number, content: string, module: string): Promise<number> {
     const tag = await this.tagRepository.findOne({ id });
     if (!tag) {
       throw new HttpException('该标签不存在', HttpStatus.BAD_REQUEST);
     }
     tag.content = content;
+    tag.module = module;
     await this.tagRepository.save(tag);
     return id;
   }
