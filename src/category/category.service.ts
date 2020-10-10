@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationData } from 'core/models/common';
 import { CategoryEntity } from 'entity/category.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
@@ -22,7 +22,7 @@ export class CategoryService {
     ): Promise<PaginationData<CategoryEntity>> {
       let res = null;
       if (module) {
-        res = await this.categoryRepository.findAndCount({where: {module}, take: size, skip: (index - 1) * size});
+        res = await this.categoryRepository.findAndCount({where: {module:In([module,'common'])}, take: size, skip: (index - 1) * size});
       } else {
         res = await this.categoryRepository.findAndCount({take: size, skip: (index - 1) * size});
       }
