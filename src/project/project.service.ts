@@ -9,6 +9,7 @@ import { DeleteResult, getRepository, Repository } from 'typeorm';
 
 @Injectable()
 export class ProjectService {
+  tagRepository: any;
   constructor(
     @InjectRepository(ProjectEntity)
     private readonly projectRepository: Repository<ProjectEntity>,
@@ -30,6 +31,7 @@ export class ProjectService {
       .createQueryBuilder('project')
       .innerJoinAndSelect('project.author', 'author')
       .leftJoinAndSelect('project.category', 'category')
+      .leftJoinAndSelect('project.tags', 'tag')
       .select([
         'project.id',
         'project.name',
@@ -38,7 +40,6 @@ export class ProjectService {
         'project.content',
         'project.github',
         'project.role',
-        'project.tag',
         'project.url',
         'project.startedAt',
         'project.endedAt',
@@ -71,6 +72,7 @@ export class ProjectService {
       .createQueryBuilder('project')
       .innerJoinAndSelect('project.author', 'author')
       .leftJoinAndSelect('project.category', 'category')
+      .leftJoinAndSelect('project.tags', 'tag')
       .select([
         'project.id',
         'project.name',
@@ -79,7 +81,6 @@ export class ProjectService {
         'project.content',
         'project.github',
         'project.role',
-        'project.tag',
         'project.url',
         'project.startedAt',
         'project.endedAt',
@@ -88,7 +89,9 @@ export class ProjectService {
         'author.username',
         'author.image',
         'category.id',
-        'category.title'
+        'category.title',
+        'tag.id',
+        'tag.content'
       ]);
     qb.where({ id });
 
@@ -108,7 +111,6 @@ export class ProjectService {
     project.content = projectData.content;
     project.github = projectData.github;
     project.role = projectData.role;
-    // project.tags = projectData.tags;
     project.url = projectData.url;
     project.startedAt = projectData.startedAt;
     project.endedAt = projectData.endedAt;
@@ -120,10 +122,16 @@ export class ProjectService {
     project.author = author;
 
     const category = await this.categoryRepository.findOne({
-      id: projectData.category
+      id: projectData.categoryId
     });
     if (category) {
       project.category = category;
+    }
+    if (projectData.tagIds && projectData.tagIds.length) {
+      const existTags = await this.tagRepository.findByIds(projectData.tagIds);
+      project.tags = existTags;
+    } else {
+      project.tags = [];
     }
     const newProject = await this.projectRepository.save(project);
     return newProject.id;
@@ -138,13 +146,17 @@ export class ProjectService {
     if (!project) {
       throw new HttpException('该项目不存在', HttpStatus.BAD_REQUEST);
     }
-    if (projectData.category) {
+    if (projectData.categoryId) {
       const category = await this.categoryRepository.findOne({
-        id: projectData.category
+        id: projectData.categoryId
       });
       if (category) {
         project.category = category;
       }
+    }
+    if (projectData.tagIds) {
+      const existTags = await this.tagRepository.findByIds(projectData.tagIds);
+      project.tags = existTags;
     }
     await this.projectRepository.save({
       ...project,

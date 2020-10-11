@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationData } from 'core/models/common';
 import { TagEntity } from 'entity/tag.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
 
 @Injectable()
 export class TagService {
@@ -17,10 +17,16 @@ export class TagService {
    */
   async findAll(
     index: number,
-    size: number
+    size: number,
+    module?: string
     ): Promise<PaginationData<TagEntity>> {
-    const res = await this.tagRepository.findAndCount({take: size, skip: (index - 1) * size});
-    return { index, size, list: res[0], total: res[1] };
+      let res = null;
+      if (module) {
+        res = await this.tagRepository.findAndCount({where: {module: In([module, 'common'])}, take: size, skip: (index - 1) * size});
+      } else {
+        res = await this.tagRepository.findAndCount({take: size, skip: (index - 1) * size});
+      }
+      return { index, size, list: res[0], total: res[1] };
   }
 
   /**

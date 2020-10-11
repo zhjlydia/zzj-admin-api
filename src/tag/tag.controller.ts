@@ -20,9 +20,10 @@ export class TagController {
   @Get('all')
   async findAll(
     @Query('index') index: number,
-    @Query('size') size: number
+    @Query('size') size: number,
+    @Query('module') module?: string
   ): Promise<PaginationData<TagEntity>> {
-    return await this.tagService.findAll(Number(index) || 0, Number(size));
+    return await this.tagService.findAll(Number(index) || 0, Number(size), module);
   }
 
   @Get(':id')

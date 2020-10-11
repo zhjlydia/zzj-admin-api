@@ -5,13 +5,14 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryEntity } from 'core/entity/category.entity';
 import { ProjectEntity } from 'core/entity/project.entity';
+import { TagEntity } from 'core/entity/tag.entity';
 import { UserEntity } from 'core/entity/user.entity';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProjectEntity, UserEntity, CategoryEntity]),
+    TypeOrmModule.forFeature([ProjectEntity, UserEntity, CategoryEntity, TagEntity]),
     UserModule
   ],
   providers: [ProjectService, OssService],
