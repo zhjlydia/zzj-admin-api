@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from 'core/entity/category.entity';
+import { TagEntity } from 'core/entity/tag.entity';
 import { UserEntity } from 'core/entity/user.entity';
 import { PaginationData } from 'core/models/common';
 import { ProjectVo } from 'core/models/project';
@@ -9,14 +10,15 @@ import { DeleteResult, getRepository, Repository } from 'typeorm';
 
 @Injectable()
 export class ProjectService {
-  tagRepository: any;
   constructor(
     @InjectRepository(ProjectEntity)
     private readonly projectRepository: Repository<ProjectEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(CategoryEntity)
-    private readonly categoryRepository: Repository<CategoryEntity>
+    private readonly categoryRepository: Repository<CategoryEntity>,
+    @InjectRepository(TagEntity)
+    private readonly tagRepository: Repository<TagEntity>
   ) {}
 
   /**
