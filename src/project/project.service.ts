@@ -111,6 +111,7 @@ export class ProjectService {
     project.image = projectData.image;
     project.description = projectData.description;
     project.content = projectData.content;
+    project.state = projectData.state;
     project.github = projectData.github;
     project.role = projectData.role;
     project.url = projectData.url;
@@ -162,10 +163,7 @@ export class ProjectService {
     }
     await this.projectRepository.save({
       ...project,
-      title: projectData.name,
-      image: projectData.image,
-      description: projectData.description,
-      content: projectData.content
+      ...projectData
     });
     return id;
   }
