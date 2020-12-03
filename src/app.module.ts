@@ -7,6 +7,7 @@ import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { ProjectModule } from './project/project.module';
 import { ShareModule } from './share/share.module';
+import { StatisticsModule } from './statistics/statistics.module';
 import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 
@@ -22,7 +23,8 @@ import { UserModule } from './user/user.module';
     TagModule,
     CategoryModule,
     UserModule,
-    ShareModule
+    ShareModule,
+    StatisticsModule
   ],
   controllers: [AppController],
   providers: [AppService]
