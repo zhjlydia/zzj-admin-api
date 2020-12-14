@@ -8,12 +8,13 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleEntity } from 'core/entity/article.entity';
 import { CategoryEntity } from 'core/entity/category.entity';
+import { ProjectEntity } from 'core/entity/project.entity';
 import { TagEntity } from 'core/entity/tag.entity';
 import { StatisticsController } from './statistics.controller';
 import { StatisticsService } from './statistics.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TagEntity, ArticleEntity, CategoryEntity]), UserModule],
+  imports: [TypeOrmModule.forFeature([TagEntity, ArticleEntity, CategoryEntity, ProjectEntity]), UserModule],
   providers: [StatisticsService],
   controllers: [StatisticsController]
 })
