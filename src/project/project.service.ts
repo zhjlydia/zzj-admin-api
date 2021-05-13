@@ -6,7 +6,7 @@ import { UserEntity } from 'core/entity/user.entity';
 import { PaginationData } from 'core/models/common';
 import { ProjectVo } from 'core/models/project';
 import { ProjectEntity } from 'entity/project.entity';
-import { DeleteResult, getRepository, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 
 @Injectable()
 export class ProjectService {
@@ -43,6 +43,7 @@ export class ProjectService {
         'project.github',
         'project.role',
         'project.url',
+        'project.state',
         'project.startedAt',
         'project.endedAt',
         'project.createdAt',
@@ -55,7 +56,7 @@ export class ProjectService {
         'tag.id',
         'tag.content'
       ]);
-    qb.where('1 = 1');
+    qb.where('project.isDeleted = 0');
 
     qb.orderBy('project.createdAt', 'DESC');
     const total = await qb.getCount();
@@ -84,6 +85,8 @@ export class ProjectService {
         'project.github',
         'project.role',
         'project.url',
+        'project.stateText',
+        'project.state',
         'project.startedAt',
         'project.endedAt',
         'project.createdAt',
@@ -111,7 +114,7 @@ export class ProjectService {
     project.image = projectData.image;
     project.description = projectData.description;
     project.content = projectData.content;
-    project.state = projectData.state;
+    project.stateText = projectData.stateText;
     project.github = projectData.github;
     project.role = projectData.role;
     project.url = projectData.url;
@@ -144,7 +147,7 @@ export class ProjectService {
    * 编辑
    *
    */
-  async update(id: number, projectData: ProjectVo): Promise<number> {
+  async update(id: number, projectData: Partial<ProjectVo>): Promise<void> {
     const project = await this.projectRepository.findOne({ id });
     if (!project) {
       throw new HttpException('该项目不存在', HttpStatus.BAD_REQUEST);
@@ -161,17 +164,18 @@ export class ProjectService {
       const existTags = await this.tagRepository.findByIds(projectData.tagIds);
       project.tags = existTags;
     }
-    await this.projectRepository.save({
-      ...project,
-      ...projectData
-    });
-    return id;
+    await this.projectRepository.save(Object.assign(project, projectData));
   }
   /**
    * 删除
    *
    */
-  async delete(id: number): Promise<DeleteResult> {
-    return this.projectRepository.delete({ id });
+  async delete(id: number): Promise<void> {
+    const project = await this.projectRepository.findOne({ id });
+    if (!project) {
+      throw new HttpException('该项目不存在', HttpStatus.BAD_REQUEST);
+    }
+    project.isDeleted = true;
+    await this.projectRepository.save(project);
   }
 }

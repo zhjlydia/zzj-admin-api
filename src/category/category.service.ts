@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationData } from 'core/models/common';
 import { CategoryEntity } from 'entity/category.entity';
-import { DeleteResult, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
@@ -19,15 +19,23 @@ export class CategoryService {
     index: number,
     size: number,
     module?: string
-    ): Promise<PaginationData<CategoryEntity>> {
-      let res = null;
-      if (module) {
-        res = await this.categoryRepository.findAndCount({where: {module:In([module,'common'])}, take: size, skip: (index - 1) * size});
-      } else {
-        res = await this.categoryRepository.findAndCount({take: size, skip: (index - 1) * size});
-      }
+  ): Promise<PaginationData<CategoryEntity>> {
+    let res = null;
+    if (module) {
+      res = await this.categoryRepository.findAndCount({
+        where: { module: In([module, 'common']), isDeleted: false },
+        take: size,
+        skip: (index - 1) * size
+      });
+    } else {
+      res = await this.categoryRepository.findAndCount({
+        where: { isDeleted: false },
+        take: size,
+        skip: (index - 1) * size
+      });
+    }
 
-      return { index, size, list: res[0], total: res[1] };
+    return { index, size, list: res[0], total: res[1] };
   }
 
   /**
@@ -35,7 +43,7 @@ export class CategoryService {
    *
    */
   async findOne(id: number): Promise<CategoryEntity> {
-    const res = await this.categoryRepository.findOne({id});
+    const res = await this.categoryRepository.findOne({ id });
     return res;
   }
 
@@ -43,7 +51,11 @@ export class CategoryService {
    * 创建
    *
    */
-  async create(title: string, description: string, module: string): Promise<number> {
+  async create(
+    title: string,
+    description: string,
+    module: string
+  ): Promise<number> {
     const category = new CategoryEntity();
     category.title = title;
     category.description = description;
@@ -72,12 +84,16 @@ export class CategoryService {
     await this.categoryRepository.save(category);
     return id;
   }
-
   /**
    * 删除
    *
    */
-  async delete(id: number): Promise<DeleteResult> {
-    return this.categoryRepository.delete({ id });
+  async delete(id: number): Promise<void> {
+    const category = await this.categoryRepository.findOne({ id });
+    if (!category) {
+      throw new HttpException('该分类不存在', HttpStatus.BAD_REQUEST);
+    }
+    category.isDeleted = true;
+    await this.categoryRepository.save(category);
   }
 }

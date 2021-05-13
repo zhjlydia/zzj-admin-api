@@ -6,7 +6,7 @@ import { UserEntity } from 'core/entity/user.entity';
 import { ArticleVo } from 'core/models/article';
 import { PaginationData } from 'core/models/common';
 import { ArticleEntity } from 'entity/article.entity';
-import { DeleteResult, getRepository, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 // tslint:disable-next-line: no-var-requires
 const slugify = require('slug');
 
@@ -44,6 +44,7 @@ export class ArticleService {
         'article.content',
         'article.createdAt',
         'article.updatedAt',
+        'article.state',
         'author.id',
         'author.username',
         'author.image',
@@ -52,7 +53,7 @@ export class ArticleService {
         'tag.id',
         'tag.content'
       ]);
-    qb.where('1 = 1');
+    qb.where('article.isDeleted = 0');
 
     qb.orderBy('article.createdAt', 'DESC');
     const total = await qb.getCount();
@@ -78,6 +79,7 @@ export class ArticleService {
         'article.image',
         'article.description',
         'article.content',
+        'article.state',
         'article.createdAt',
         'article.updatedAt',
         'author.username',
@@ -94,7 +96,7 @@ export class ArticleService {
   }
 
   /**
-   * 创建
+   * 创建文章
    *
    */
   async create(userId: number, articleData: ArticleVo): Promise<number> {
@@ -127,10 +129,10 @@ export class ArticleService {
   }
 
   /**
-   * 编辑
+   * 编辑文章
    *
    */
-  async update(id: number, articleData: ArticleVo): Promise<number> {
+  async update(id: number, articleData: ArticleVo): Promise<void> {
     const article = await this.articleRepository.findOne({ id });
     if (!article) {
       throw new HttpException('该文章不存在', HttpStatus.BAD_REQUEST);
@@ -147,22 +149,21 @@ export class ArticleService {
       const existTags = await this.tagRepository.findByIds(articleData.tagIds);
       article.tags = existTags;
     }
-    await this.articleRepository.save({
-      ...article,
-      title: articleData.title,
-      image: articleData.image,
-      description: articleData.description,
-      content: articleData.content
-    });
-    return id;
+    await this.articleRepository.save(Object.assign(article, articleData));
   }
   /**
    * 删除
    *
    */
-  async delete(id: number): Promise<DeleteResult> {
-    return this.articleRepository.delete({ id });
+  async delete(id: number): Promise<void> {
+    const article = await this.articleRepository.findOne({ id });
+    if (!article) {
+      throw new HttpException('该文章不存在', HttpStatus.BAD_REQUEST);
+    }
+    article.isDeleted = true;
+    await this.articleRepository.save(article);
   }
+
   slugify(title: string) {
     // tslint:disable-next-line:no-bitwise
     return (

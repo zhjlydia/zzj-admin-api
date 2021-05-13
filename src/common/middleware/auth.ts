@@ -18,24 +18,19 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const authHeaders = req.headers.authorization;
-    let token = '';
-    if (authHeaders) {
-      token = (authHeaders as string).split(' ')[1];
-    }
+    const token = req.cookies.jwt;
     if (token) {
       try {
         const decoded: any = jwt.verify(token, SECRET);
         const user = await this.userService.findById(decoded.id);
         if (!user) {
-        throw new HttpException('User not found.', HttpStatus.UNAUTHORIZED);
-      }
+          throw new HttpException('User not found.', HttpStatus.UNAUTHORIZED);
+        }
         req.$current = user;
         next();
       } catch (e) {
         throw new HttpException('Not authorized.', HttpStatus.UNAUTHORIZED);
       }
-
     } else {
       throw new HttpException('Not authorized.', HttpStatus.UNAUTHORIZED);
     }

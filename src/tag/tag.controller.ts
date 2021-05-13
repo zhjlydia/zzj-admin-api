@@ -8,9 +8,6 @@ import {
   Put,
   Query
 } from '@nestjs/common';
-import { TagEntity } from 'core/entity/tag.entity';
-import { PaginationData } from 'core/models/common';
-import { DeleteResult } from 'typeorm';
 import { TagService } from './tag.service';
 
 @Controller('tag')
@@ -22,17 +19,20 @@ export class TagController {
     @Query('index') index: number,
     @Query('size') size: number,
     @Query('module') module?: string
-  ): Promise<PaginationData<TagEntity>> {
-    return await this.tagService.findAll(Number(index) || 0, Number(size), module);
+  ) {
+    return this.tagService.findAll(Number(index) || 0, Number(size), module);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<TagEntity> {
-    return await this.tagService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    return this.tagService.findOne(id);
   }
 
   @Post()
-  async create(@Body('content') content: string, @Body('module') module: string): Promise<number> {
+  async create(
+    @Body('content') content: string,
+    @Body('module') module: string
+  ) {
     return this.tagService.create(content, module);
   }
 
@@ -41,12 +41,12 @@ export class TagController {
     @Param('id') id: number,
     @Body('content') content: string,
     @Body('module') module: string
-  ): Promise<number> {
+  ) {
     return this.tagService.update(id, content, module);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<DeleteResult> {
+  async delete(@Param('id') id: number) {
     return this.tagService.delete(id);
   }
 }

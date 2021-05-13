@@ -26,5 +26,7 @@ COPY --from=installer /var/app/node_modules ./node_modules
 COPY --from=installer /var/app/package*.json ./
 COPY --from=compiler /var/app/dist ./dist
 
+ENV TZ "Asia/Shanghai"
+
 EXPOSE 3000
 CMD ["node", "dist/src/main"]

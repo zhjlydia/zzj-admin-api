@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2017",

@@ -16,7 +16,8 @@ import { ArticleService } from './article.service';
     UserModule
   ],
   providers: [ArticleService, OssService],
-  controllers: [ArticleController]
+  controllers: [ArticleController],
+  exports: [ArticleService]
 })
 export class ArticleModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

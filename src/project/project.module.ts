@@ -16,7 +16,8 @@ import { ProjectService } from './project.service';
     UserModule
   ],
   providers: [ProjectService, OssService],
-  controllers: [ProjectController]
+  controllers: [ProjectController],
+  exports: [ProjectService]
 })
 export class ProjectModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

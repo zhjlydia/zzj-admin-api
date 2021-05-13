@@ -1,6 +1,5 @@
 import { SECRET } from '@/common/secret';
-import { Injectable } from '@nestjs/common';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'core/entity/user.entity';
 import { UserDto, UserVo } from 'core/models/user';
@@ -21,7 +20,7 @@ export class UserService {
       password: crypto.createHmac('sha256', user.password).digest('hex')
     };
 
-    return await this.userRepository.findOne(findOneOptions);
+    return this.userRepository.findOne(findOneOptions);
   }
 
   async findById(id: number): Promise<UserDto> {

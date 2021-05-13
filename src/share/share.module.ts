@@ -1,3 +1,4 @@
+import { AuthMiddleware } from '@/common/middleware/auth';
 import { OssService } from '@/common/services/oss';
 import { UserModule } from '@/user/user.module';
 import {
@@ -16,11 +17,9 @@ import { ShareService } from './share.service';
 })
 export class ShareModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    consumer.apply().forRoutes(
-      {
-        path: 'share/upload',
-        method: RequestMethod.POST
-      }
-    );
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: 'share/upload',
+      method: RequestMethod.POST
+    });
   }
 }
