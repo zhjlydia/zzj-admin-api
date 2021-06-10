@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import cookieParser from 'cookie-parser';
 import { CommonExceptionFilter } from 'core/filters/common-exception.filter';
 import { TransformInterceptor } from 'core/interceptor/transform.interceptor';
 import alias from 'module-alias';
@@ -15,7 +14,6 @@ alias.addAliases({
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser());
   // 全局错误过滤器
   app.useGlobalFilters(new CommonExceptionFilter());
   // 全局接口返回结果处理器
