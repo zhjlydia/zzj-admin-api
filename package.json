@@ -38,7 +38,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.3",
     "slug": "^1.1.0",
-    "typeorm": "^0.2.15",
+    "typeorm": "^0.2.25",
     "typescript": "^3.7.3",
     "module-alias": "^2.2.2",
     "ali-oss": "^6.10.0",
