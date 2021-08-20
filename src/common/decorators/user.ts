@@ -1,5 +1,14 @@
-import { createParamDecorator } from '@nestjs/common';
+import {
+  createParamDecorator,
+  HttpException,
+  HttpStatus
+} from '@nestjs/common';
 
 export const User = createParamDecorator((data, req) => {
-  return !!data ? req.$current[data] : req.$current;
+  const reqData = req.args[0];
+  if (!!reqData.$current) {
+    return !!data ? reqData.$current[data] : reqData.$current;
+  } else {
+    throw new HttpException('Not authorized.', HttpStatus.UNAUTHORIZED);
+  }
 });
