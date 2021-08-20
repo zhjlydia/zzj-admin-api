@@ -1,7 +1,7 @@
-import { SECRET } from '@/common/secret';
 import { UserService } from '@/user/user.service';
 import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { ConfigService } from '@nestjs/config';
 import { UserDto } from 'core/models/user';
 import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
@@ -15,7 +15,10 @@ declare global {
 }
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private configService: ConfigService
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const authHeaders = req.headers.authorization;
@@ -29,6 +32,7 @@ export class AuthMiddleware implements NestMiddleware {
     }
     if (token) {
       try {
+        const SECRET = this.configService.get<string>('SECURITY_JWT_SECRET');
         const decoded: Record<string, any> = jwt.verify(token, SECRET);
         const user = await this.userService.findById(decoded.id);
         if (!user) {

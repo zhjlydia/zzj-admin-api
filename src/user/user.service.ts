@@ -1,5 +1,5 @@
-import { SECRET } from '@/common/secret';
 import { HttpException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'core/entity/user.entity';
 import { UserDto, UserVo } from 'core/models/user';
@@ -11,7 +11,8 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    private configService: ConfigService
   ) {}
 
   async findOne(user: UserVo): Promise<UserEntity> {
@@ -44,7 +45,7 @@ export class UserService {
     const today = new Date();
     const exp = new Date(today);
     exp.setDate(today.getDate() + 1);
-
+    const SECRET = this.configService.get<string>('SECURITY_JWT_SECRET');
     return jwt.sign(
       {
         id: user.id,
